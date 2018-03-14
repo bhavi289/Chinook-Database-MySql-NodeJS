@@ -6,7 +6,7 @@ const db = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
     password : '',
-    database : 'chinook'
+    database : 'chinook_full_index'
 });
 
 // Connect
@@ -91,6 +91,24 @@ app.get('/Playlist/:id', (req, res) => {
 // Join Querry
 app.get('/Employee', (req, res) => {
     let sql = 'SELECT  * FROM Employee';
+    let query = db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.json(result);
+    });
+});
+
+app.get('/khtarnak_join', (req, res) => {
+    let sql = 'SELECT * FROM(SELECT * FROM InvoiceLine INNER JOIN Invoice ON InvoiceLine.InvoiceId = Invoice.Invoice_Id INNER JOIN (SELECT * FROM Track INNER JOIN (SELECT * FROM Album INNER JOIN Artist ON Album.Artist_Id = Artist.ArtistId) z ON Track.AlbumId = z.Album_Id INNER JOIN MediaType ON Track.MediaTypeId = MediaType.MediaType_Id INNER JOIN Genre ON Track.GenreId = Genre.Genre_Id)k ON InvoiceLine.TrackId = k.Track_Id)y INNER JOIN Customer ON y.CustomerId=Customer.Customer_Id';
+    let query = db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.json(result);
+    });
+});
+
+app.get('/khtarnak_join2', (req, res) => {
+    let sql = 'SELECT  PlaylistTrack.PlaylistId,Playlist_name, TrackName,Composer,AlbumTitle,ArtistName,MediaTypeName,GenreName,Milliseconds,Bytes,TrackPrice FROM PlaylistTrack INNER JOIN Playlist ON PlaylistTrack.PlaylistId = Playlist.PlaylistId INNER JOIN (SELECT * FROM Track INNER JOIN (SELECT * FROM Album INNER JOIN Artist ON Album.Artist_Id = Artist.ArtistId) z ON Track.AlbumId = z.Album_Id INNER JOIN MediaType ON Track.MediaTypeId = MediaType.MediaType_Id INNER JOIN Genre ON Track.GenreId = Genre.Genre_Id) p ON PlaylistTrack.TrackId = p.Track_Id';
     let query = db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
